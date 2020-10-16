@@ -37,8 +37,29 @@ const MORSE_TABLE = {
     '-----':  '0',
 };
 
+function chunkString(input, size) {
+    const iter = (acc, str) => {
+        if (str.length === 0) return acc;
+        const newAcc = [...acc, str.substr(0, size)];
+        return iter(newAcc, str.substr(size, str.length));
+    }
+    return iter([], input);
+}
+
+function getSymbol(str) {
+    if (str === '**********') return ' ';
+    const strArr = chunkString(str, 2);
+    const result = strArr.reduce((acc, pair) => {
+        if (pair === '10') return [...acc, '.'];
+        if (pair === '11') return [...acc, '-'];
+        return acc;
+    }, []);
+    return MORSE_TABLE[result.join('')];
+}
+
 function decode(expr) {
-    // write your solution here
+    const strArr = chunkString(expr, 10);
+    return strArr.map((item) => getSymbol(item)).join('');
 }
 
 module.exports = {
